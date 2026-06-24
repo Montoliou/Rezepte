@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f8f9f6">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Dynamische Rezept- und Kochhilfe für das iPad.">
+    <title>Montys Rezepte</title>
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./assets/icons/app-icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./assets/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+
+    <div class="app-shell">
+      <header class="site-header" id="site-header">
+        <button class="brand-button" id="brand-button" type="button" aria-label="Zur Rezeptauswahl">
+          Montys Rezepte
+        </button>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <button class="nav-button is-active" id="recipes-nav" type="button">Rezepte</button>
+          <button class="nav-button" id="last-recipe-nav" type="button">Letztes Rezept</button>
+        </nav>
+      </header>
+
+      <main id="main-content">
+        <section class="screen catalog-screen" id="catalog-screen" aria-labelledby="catalog-title">
+          <div class="screen-inner catalog-inner">
+            <div class="catalog-heading">
+              <h1 id="catalog-title">Was möchtest du kochen?</h1>
+              <p>Wähle ein Rezept. Mengen, Vorbereitung und Ablauf passen sich anschließend an deine Planung an.</p>
+            </div>
+            <div id="recipe-list" class="recipe-list" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="screen setup-screen" id="setup-screen" hidden aria-labelledby="setup-title">
+          <header class="sub-header">
+            <button class="back-button" id="setup-back" type="button">
+              <span aria-hidden="true">‹</span> Rezepte
+            </button>
+            <h1 id="setup-title">Teriyaki Bowl</h1>
+            <span class="sub-header-spacer" aria-hidden="true"></span>
+          </header>
+
+          <div class="setup-layout">
+            <form class="setup-form" id="setup-form">
+              <div class="setup-form-inner">
+                <section class="setup-primary" aria-labelledby="persons-heading">
+                  <h2 id="persons-heading">Für wie viele Personen kochst du?</h2>
+                  <div class="stepper" aria-label="Personenzahl">
+                    <button type="button" id="persons-decrease" aria-label="Eine Person weniger">−</button>
+                    <output id="persons-output" for="persons-decrease persons-increase">8</output>
+                    <button type="button" id="persons-increase" aria-label="Eine Person mehr">+</button>
+                  </div>
+                  <input id="persons" name="persons" type="number" min="1" max="30" value="8" class="visually-hidden" tabindex="-1">
+                </section>
+
+                <div class="field-grid">
+                  <label class="field field-prominent">
+                    <span>Fertig um</span>
+                    <input id="finish-time" name="finishTime" type="time" value="13:00">
+                  </label>
+                  <label class="field">
+                    <span>Zeitpuffer</span>
+                    <select id="buffer" name="buffer">
+                      <option value="0">Kein zusätzlicher Puffer</option>
+                      <option value="10">10 Minuten</option>
+                      <option value="20">20 Minuten</option>
+                      <option value="30">30 Minuten</option>
+                    </select>
+                  </label>
+                </div>
+
+                <section class="settings-section" aria-labelledby="guests-heading">
+                  <div class="section-heading-row">
+                    <div>
+                      <h3 id="guests-heading">Gäste</h3>
+                      <p>Flexible Gäste ergeben sich automatisch.</p>
+                    </div>
+                    <strong id="flexible-summary">4 flexibel</strong>
+                  </div>
+                  <div class="compact-grid">
+                    <label class="field">
+                      <span>Vegetarier</span>
+                      <input id="vegetarians" name="vegetarians" type="number" min="0" max="30" value="2">
+                    </label>
+                    <label class="field">
+                      <span>Fleischesser</span>
+                      <input id="meat-eaters" name="meatEaters" type="number" min="0" max="30" value="2">
+                    </label>
+                  </div>
+                  <p class="validation-message" id="guest-validation" role="alert" hidden></p>
+                </section>
+
+                <details class="settings-details" open>
+                  <summary>Proteine und Sauce</summary>
+                  <div class="compact-grid details-grid">
+                    <label class="field">
+                      <span>Hähnchen vorhanden</span>
+                      <div class="input-with-unit">
+                        <input id="chicken-available" name="chickenAvailable" type="number" min="0" max="10000" step="10" value="450">
+                        <span>g</span>
+                      </div>
+                    </label>
+                    <label class="field">
+                      <span>Hähnchen je Fleischesser</span>
+                      <div class="input-with-unit">
+                        <input id="chicken-per-person" name="chickenPerPerson" type="number" min="80" max="300" step="10" value="180">
+                        <span>g</span>
+                      </div>
+                    </label>
+                    <label class="field">
+                      <span>Tofu je Portion</span>
+                      <div class="input-with-unit">
+                        <input id="tofu-per-portion" name="tofuPerPortion" type="number" min="80" max="300" step="10" value="150">
+                        <span>g</span>
+                      </div>
+                    </label>
+                    <label class="field">
+                      <span>Flexible Tofuportionen</span>
+                      <select id="flex-tofu-share" name="flexTofuShare">
+                        <option value="0">0 %</option>
+                        <option value="25">25 %</option>
+                        <option value="50" selected>50 %</option>
+                        <option value="75">75 %</option>
+                        <option value="100">100 %</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>Sriracha-Mayo</span>
+                      <select id="sriracha-heat" name="srirachaHeat">
+                        <option value="1">Mild</option>
+                        <option value="2" selected>Normal</option>
+                        <option value="3">Scharf</option>
+                      </select>
+                    </label>
+                    <label class="toggle-row">
+                      <span>
+                        <strong>Überschuss mitbraten</strong>
+                        <small>Sonst wird nur der Bedarf eingeplant.</small>
+                      </span>
+                      <input id="use-all-chicken" name="useAllChicken" type="checkbox" role="switch">
+                    </label>
+                  </div>
+                </details>
+
+                <details class="settings-details">
+                  <summary>Reis und Toppings</summary>
+                  <div class="compact-grid details-grid">
+                    <label class="field">
+                      <span>Reis pro Person</span>
+                      <div class="input-with-unit">
+                        <input id="rice-per-person" name="ricePerPerson" type="number" min="50" max="120" step="5" value="80">
+                        <span>g</span>
+                      </div>
+                    </label>
+                    <label class="field">
+                      <span>Avocado-Faktor</span>
+                      <select id="avocado-factor" name="avocadoFactor">
+                        <option value="0.25">¼ pro Person</option>
+                        <option value="0.5" selected>½ pro Person</option>
+                        <option value="0.75">¾ pro Person</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>Mango-Faktor</span>
+                      <select id="mango-factor" name="mangoFactor">
+                        <option value="0">Ohne Mango</option>
+                        <option value="0.25" selected>¼ pro Person</option>
+                        <option value="0.5">½ pro Person</option>
+                      </select>
+                    </label>
+                    <label class="toggle-row">
+                      <span>
+                        <strong>Edamame</strong>
+                        <small>50 g pro Person</small>
+                      </span>
+                      <input id="edamame-enabled" name="edamameEnabled" type="checkbox" role="switch" checked>
+                    </label>
+                  </div>
+                </details>
+              </div>
+            </form>
+
+            <aside class="planning-summary" aria-labelledby="planning-title">
+              <div class="planning-summary-inner">
+                <h2 id="planning-title">Deine Planung</h2>
+                <div class="summary-list" id="summary-list"></div>
+                <div class="advisory" id="planning-advisory" hidden></div>
+                <div class="logic-note" id="logic-note"></div>
+              </div>
+            </aside>
+          </div>
+
+          <div class="setup-actions">
+            <button class="button button-secondary" id="ingredients-only-button" type="button">Nur Zutaten ansehen</button>
+            <button class="button button-primary" id="start-guide-button" type="button">Kochhilfe starten</button>
+          </div>
+        </section>
+
+        <section class="screen guide-screen" id="guide-screen" hidden aria-labelledby="guide-title">
+          <header class="sub-header guide-header">
+            <button class="back-button" id="guide-back" type="button">
+              <span aria-hidden="true">‹</span> Teriyaki Bowl
+            </button>
+            <h1 id="guide-title">Kochhilfe</h1>
+            <button class="end-plan-button" id="end-plan-button" type="button">Plan beenden</button>
+          </header>
+
+          <nav class="phase-nav" aria-label="Kochphasen">
+            <button class="phase-button is-active" type="button" data-phase="ingredients">
+              <span>1</span> Zutaten
+            </button>
+            <button class="phase-button" type="button" data-phase="mise">
+              <span>2</span> Mise en Place
+            </button>
+            <button class="phase-button" type="button" data-phase="cook">
+              <span>3</span> Kochen
+            </button>
+          </nav>
+
+          <div class="guide-content">
+            <section class="phase-panel ingredients-panel" id="ingredients-panel" aria-labelledby="ingredients-title">
+              <div class="phase-intro">
+                <div>
+                  <h2 id="ingredients-title">Diese Zutaten brauchst du</h2>
+                  <p id="ingredients-subtitle">Mengen für 8 Personen.</p>
+                </div>
+                <div class="utility-actions">
+                  <button class="text-button" id="copy-button" type="button">Alles kopieren</button>
+                  <button class="text-button" id="print-button" type="button">Drucken</button>
+                </div>
+              </div>
+              <div class="ingredient-groups" id="ingredient-groups"></div>
+              <div class="phase-footer-actions">
+                <button class="button button-primary next-phase-button" type="button" data-next-phase="mise">
+                  Weiter zur Mise en Place
+                </button>
+              </div>
+            </section>
+
+            <section class="phase-panel mise-panel" id="mise-panel" hidden aria-labelledby="mise-title">
+              <div class="phase-intro">
+                <div>
+                  <h2 id="mise-title">Mise en Place</h2>
+                  <p>Bereite alles vor, bevor Pfanne und Reis gleichzeitig Aufmerksamkeit verlangen.</p>
+                </div>
+                <strong class="progress-label" id="mise-progress">0 von 0 erledigt</strong>
+              </div>
+              <div class="check-list" id="mise-list"></div>
+              <div class="phase-footer-actions">
+                <button class="button button-primary next-phase-button" type="button" data-next-phase="cook">
+                  Kochen beginnen
+                </button>
+              </div>
+            </section>
+
+            <section class="phase-panel cook-panel" id="cook-panel" hidden aria-labelledby="cook-current-title">
+              <div class="cook-layout">
+                <article class="current-step" id="current-step">
+                  <p class="current-time" id="current-step-time"></p>
+                  <h2 id="cook-current-title">Vorbereitung starten</h2>
+                  <p class="current-instruction" id="current-step-instruction"></p>
+                  <div class="step-details" id="current-step-details"></div>
+                  <div class="timer" id="timer" hidden>
+                    <output id="timer-output" aria-live="polite">00:00</output>
+                    <div class="timer-actions">
+                      <button class="button button-primary" id="timer-toggle" type="button">Timer starten</button>
+                      <button class="button button-secondary" id="timer-reset" type="button">Zurücksetzen</button>
+                    </div>
+                  </div>
+                  <button class="button button-secondary complete-step-button" id="complete-step-button" type="button">
+                    Schritt erledigt
+                  </button>
+                  <div class="parallel-note" id="parallel-note" hidden></div>
+                </article>
+
+                <aside class="timeline-rail" aria-label="Ablaufplan">
+                  <div class="timeline-heading">
+                    <div>
+                      <h2>Ablauf bis <span id="finish-time-label">13:00 Uhr</span></h2>
+                      <p id="timeline-start-label">Empfohlener Start: 11:00 Uhr</p>
+                    </div>
+                    <button class="text-button" id="reset-progress-button" type="button">Fortschritt zurücksetzen</button>
+                  </div>
+                  <div class="timeline-list" id="timeline-list"></div>
+                  <div class="next-step-preview" id="next-step-preview"></div>
+                </aside>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="offline-status" id="offline-status" hidden>
+        Offline – die geladene Kochhilfe bleibt verfügbar.
+      </footer>
+    </div>
+
+    <noscript>Diese Kochhilfe benötigt JavaScript für Mengen- und Zeitberechnungen.</noscript>
+    <script type="module" src="./assets/app.js"></script>
+  </body>
+</html>

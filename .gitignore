@@ -1,0 +1,7 @@
+node_modules/
+**/.ftp-credentials
+bowl-dashboard-ipad-v3.html
+Sushi Bowl Teryaki/
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,19 @@
+{
+  "name": "Montys Rezepte",
+  "short_name": "Rezepte",
+  "description": "Dynamische Rezept- und Kochhilfe für das iPad.",
+  "lang": "de-DE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f9f6",
+  "theme_color": "#f8f9f6",
+  "icons": [
+    {
+      "src": "./assets/icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
