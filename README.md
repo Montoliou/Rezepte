@@ -5,8 +5,9 @@ Statische, iPad-optimierte Rezept- und Kochhilfe. Die erste integrierte Rezeptka
 ## Funktionen
 
 - dynamische Zutatenmengen für 1–30 Personen
-- getrennte Planung für Vegetarier, Fleischesser und flexible Gäste
-- transparente Hähnchen-/Tofu-Verteilung
+- direkte Planung von Hähnchen- und Tofuportionen
+- frei wählbare Grammmenge je Proteinportion
+- abhakebare Einkaufsliste mit Kopieren und iPad-Share-Sheet
 - Zutaten-, Mise-en-Place- und Kochansicht
 - rückwärts von der Zielzeit berechneter Ablauf
 - Chargenregeln für größere Proteinmengen

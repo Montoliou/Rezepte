@@ -30,20 +30,17 @@ const elements = {
   personsIncrease: document.getElementById("persons-increase"),
   finishTime: document.getElementById("finish-time"),
   buffer: document.getElementById("buffer"),
-  vegetarians: document.getElementById("vegetarians"),
-  meatEaters: document.getElementById("meat-eaters"),
-  chickenAvailable: document.getElementById("chicken-available"),
+  chickenPortions: document.getElementById("chicken-portions"),
   chickenPerPerson: document.getElementById("chicken-per-person"),
+  tofuPortions: document.getElementById("tofu-portions"),
   tofuPerPortion: document.getElementById("tofu-per-portion"),
-  flexTofuShare: document.getElementById("flex-tofu-share"),
   srirachaHeat: document.getElementById("sriracha-heat"),
-  useAllChicken: document.getElementById("use-all-chicken"),
   ricePerPerson: document.getElementById("rice-per-person"),
   avocadoFactor: document.getElementById("avocado-factor"),
   mangoFactor: document.getElementById("mango-factor"),
   edamameEnabled: document.getElementById("edamame-enabled"),
-  flexibleSummary: document.getElementById("flexible-summary"),
-  guestValidation: document.getElementById("guest-validation"),
+  proteinPortionsSummary: document.getElementById("protein-portions-summary"),
+  proteinCoverageNote: document.getElementById("protein-coverage-note"),
   summaryList: document.getElementById("summary-list"),
   planningAdvisory: document.getElementById("planning-advisory"),
   logicNote: document.getElementById("logic-note"),
@@ -58,6 +55,11 @@ const elements = {
     cook: document.getElementById("cook-panel")
   },
   ingredientsSubtitle: document.getElementById("ingredients-subtitle"),
+  shoppingGroups: document.getElementById("shopping-groups"),
+  shoppingStatus: document.getElementById("shopping-status"),
+  shareShoppingButton: document.getElementById("share-shopping-button"),
+  copyShoppingButton: document.getElementById("copy-shopping-button"),
+  resetShoppingButton: document.getElementById("reset-shopping-button"),
   ingredientGroups: document.getElementById("ingredient-groups"),
   copyButton: document.getElementById("copy-button"),
   printButton: document.getElementById("print-button"),
@@ -84,16 +86,20 @@ const elements = {
 
 const storedState = loadState();
 const initialRecipe = getRecipe(storedState?.recipeId);
+const migratedStoredSettings = initialRecipe.migrateSettings
+  ? initialRecipe.migrateSettings(storedState?.settings ?? {})
+  : (storedState?.settings ?? {});
 const state = {
   recipeId: initialRecipe.id,
   settings: {
     ...initialRecipe.defaults,
-    ...(storedState?.settings ?? {})
+    ...migratedStoredSettings
   },
   screen: "catalog",
   phase: storedState?.phase ?? "ingredients",
   miseCompleted: Array.isArray(storedState?.miseCompleted) ? storedState.miseCompleted : [],
   cookCompleted: Array.isArray(storedState?.cookCompleted) ? storedState.cookCompleted : [],
+  shoppingCompleted: Array.isArray(storedState?.shoppingCompleted) ? storedState.shoppingCompleted : [],
   selectedStepId: storedState?.selectedStepId ?? null,
   hasHistory: Boolean(storedState?.recipeId)
 };
@@ -118,6 +124,7 @@ function persist() {
     phase: state.phase,
     miseCompleted: state.miseCompleted,
     cookCompleted: state.cookCompleted,
+    shoppingCompleted: state.shoppingCompleted,
     selectedStepId: state.selectedStepId
   });
   state.hasHistory = true;
@@ -170,14 +177,11 @@ function syncFormFromSettings() {
   elements.personsOutput.textContent = settings.persons;
   elements.finishTime.value = settings.finishTime;
   elements.buffer.value = settings.buffer;
-  elements.vegetarians.value = settings.vegetarians;
-  elements.meatEaters.value = settings.meatEaters;
-  elements.chickenAvailable.value = settings.chickenAvailable;
+  elements.chickenPortions.value = settings.chickenPortions;
   elements.chickenPerPerson.value = settings.chickenPerPerson;
+  elements.tofuPortions.value = settings.tofuPortions;
   elements.tofuPerPortion.value = settings.tofuPerPortion;
-  elements.flexTofuShare.value = settings.flexTofuShare;
   elements.srirachaHeat.value = settings.srirachaHeat;
-  elements.useAllChicken.checked = settings.useAllChicken;
   elements.ricePerPerson.value = settings.ricePerPerson;
   elements.avocadoFactor.value = settings.avocadoFactor;
   elements.mangoFactor.value = settings.mangoFactor;
@@ -189,14 +193,11 @@ function readSettingsFromForm() {
     persons: Number(elements.persons.value),
     finishTime: elements.finishTime.value,
     buffer: Number(elements.buffer.value),
-    vegetarians: Number(elements.vegetarians.value),
-    meatEaters: Number(elements.meatEaters.value),
-    chickenAvailable: Number(elements.chickenAvailable.value),
+    chickenPortions: Number(elements.chickenPortions.value),
     chickenPerPerson: Number(elements.chickenPerPerson.value),
+    tofuPortions: Number(elements.tofuPortions.value),
     tofuPerPortion: Number(elements.tofuPerPortion.value),
-    flexTofuShare: Number(elements.flexTofuShare.value),
     srirachaHeat: Number(elements.srirachaHeat.value),
-    useAllChicken: elements.useAllChicken.checked,
     ricePerPerson: Number(elements.ricePerPerson.value),
     avocadoFactor: Number(elements.avocadoFactor.value),
     mangoFactor: Number(elements.mangoFactor.value),
@@ -228,22 +229,17 @@ function renderSetupSummary(plan) {
 
 function updateCalculation() {
   const recipe = getRecipe(state.recipeId);
-  if (Number(elements.meatEaters.value) === 0) {
-    elements.useAllChicken.checked = false;
+  const nextSettings = readSettingsFromForm();
+  if (JSON.stringify(nextSettings) !== JSON.stringify(state.settings)) {
+    state.shoppingCompleted = [];
   }
-  state.settings = readSettingsFromForm();
+  state.settings = nextSettings;
   result = recipe.calculate(state.settings);
   elements.personsOutput.textContent = state.settings.persons;
-  elements.flexTofuShare.disabled = state.settings.vegetarians === 0;
-  elements.useAllChicken.disabled = state.settings.meatEaters === 0;
-
-  const tentativeFlexible = Math.max(
-    0,
-    state.settings.persons - state.settings.vegetarians - state.settings.meatEaters
-  );
-  elements.flexibleSummary.textContent = `${tentativeFlexible} flexibel`;
-  elements.guestValidation.hidden = result.valid;
-  elements.guestValidation.textContent = result.valid ? "" : result.errors[0];
+  elements.proteinPortionsSummary.textContent = `${result.plan.totalProteinPortions} Portionen`;
+  elements.proteinCoverageNote.textContent = result.plan.advisory
+    || "Die Proteinportionen entsprechen genau der Personenzahl.";
+  elements.proteinCoverageNote.classList.toggle("is-warning", result.plan.proteinDifference !== 0);
   elements.ingredientsOnlyButton.disabled = !result.valid;
   elements.startGuideButton.disabled = !result.valid;
 
@@ -251,10 +247,6 @@ function updateCalculation() {
     lastValidResult = result;
     renderSetupSummary(result.plan);
     persist();
-  } else {
-    elements.planningAdvisory.hidden = false;
-    elements.planningAdvisory.innerHTML = `${icons.warning}<span>Bitte korrigiere die Gästezahlen. Die Übersicht zeigt bis dahin die letzte gültige Planung.</span>`;
-    elements.logicNote.textContent = result.errors[0];
   }
 }
 
@@ -266,6 +258,7 @@ function openRecipe(recipeId, target = "setup") {
     state.settings = { ...recipe.defaults };
     state.miseCompleted = [];
     state.cookCompleted = [];
+    state.shoppingCompleted = [];
     state.selectedStepId = null;
   }
   syncFormFromSettings();
@@ -290,6 +283,7 @@ function setPhase(phase) {
 
 function renderIngredients(plan) {
   elements.ingredientsSubtitle.textContent = `Mengen für ${state.settings.persons} Personen.`;
+  renderShopping(plan);
   elements.ingredientGroups.innerHTML = plan.ingredientGroups.map((group) => `
     <section class="ingredient-group">
       <h3>${group.title}</h3>
@@ -304,6 +298,38 @@ function renderIngredients(plan) {
       </ul>
     </section>
   `).join("");
+}
+
+function shoppingItems(plan) {
+  return plan.shoppingGroups.flatMap((group) => group.items);
+}
+
+function updateShoppingStatus(plan, message = "") {
+  const total = shoppingItems(plan).length;
+  const completed = state.shoppingCompleted.length;
+  elements.shoppingStatus.textContent = message || `${completed} von ${total} Positionen abgehakt.`;
+}
+
+function renderShopping(plan) {
+  const validIds = new Set(shoppingItems(plan).map((item) => item.id));
+  state.shoppingCompleted = state.shoppingCompleted.filter((id) => validIds.has(id));
+  elements.shoppingGroups.innerHTML = plan.shoppingGroups.map((group) => `
+    <section class="shopping-group">
+      <h4>${group.title}</h4>
+      <div class="shopping-list">
+        ${group.items.map((item) => `
+          <label class="shopping-item">
+            <input type="checkbox" data-shopping-id="${item.id}" ${state.shoppingCompleted.includes(item.id) ? "checked" : ""}>
+            <span>
+              <strong>${item.value} ${item.label}</strong>
+              ${item.note ? `<small>${item.note}</small>` : ""}
+            </span>
+          </label>
+        `).join("")}
+      </div>
+    </section>
+  `).join("");
+  updateShoppingStatus(plan);
 }
 
 function renderMise(plan) {
@@ -496,8 +522,19 @@ function createCopyText(plan) {
   ].join("\n");
 }
 
-async function copyPlan() {
-  const text = createCopyText(lastValidResult.plan);
+function createShoppingText(plan) {
+  return [
+    `Einkaufsliste – Teriyaki Bowl für ${state.settings.persons} Personen`,
+    "",
+    ...plan.shoppingGroups.flatMap((group) => [
+      group.title,
+      ...group.items.map((item) => `- ${item.value} ${item.label}${item.note ? ` (${item.note})` : ""}`),
+      ""
+    ])
+  ].join("\n").trim();
+}
+
+async function writeClipboard(text) {
   try {
     await navigator.clipboard.writeText(text);
   } catch {
@@ -510,11 +547,49 @@ async function copyPlan() {
     document.execCommand("copy");
     textarea.remove();
   }
+}
+
+async function copyPlan() {
+  await writeClipboard(createCopyText(lastValidResult.plan));
   const original = elements.copyButton.textContent;
   elements.copyButton.textContent = "Kopiert";
   window.setTimeout(() => {
     elements.copyButton.textContent = original;
   }, 1400);
+}
+
+async function copyShoppingList() {
+  await writeClipboard(createShoppingText(lastValidResult.plan));
+  updateShoppingStatus(lastValidResult.plan, "Einkaufsliste kopiert.");
+}
+
+async function shareShoppingList() {
+  const shareData = {
+    title: "Einkaufsliste – Teriyaki Bowl",
+    text: createShoppingText(lastValidResult.plan)
+  };
+
+  if (!navigator.share) {
+    await copyShoppingList();
+    updateShoppingStatus(
+      lastValidResult.plan,
+      "Teilen wird hier nicht unterstützt. Die Einkaufsliste wurde stattdessen kopiert."
+    );
+    return;
+  }
+
+  try {
+    await navigator.share(shareData);
+    updateShoppingStatus(lastValidResult.plan, "Einkaufsliste an das Share-Sheet übergeben.");
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      await copyShoppingList();
+      updateShoppingStatus(
+        lastValidResult.plan,
+        "Teilen war nicht möglich. Die Einkaufsliste wurde stattdessen kopiert."
+      );
+    }
+  }
 }
 
 function endPlan() {
@@ -576,6 +651,25 @@ elements.phaseButtons.forEach((button) => {
 });
 elements.nextPhaseButtons.forEach((button) => {
   button.addEventListener("click", () => setPhase(button.dataset.nextPhase));
+});
+
+elements.shoppingGroups.addEventListener("change", (event) => {
+  const checkbox = event.target.closest("[data-shopping-id]");
+  if (!checkbox) return;
+  const id = checkbox.dataset.shoppingId;
+  state.shoppingCompleted = checkbox.checked
+    ? [...new Set([...state.shoppingCompleted, id])]
+    : state.shoppingCompleted.filter((item) => item !== id);
+  updateShoppingStatus(lastValidResult.plan);
+  persist();
+});
+
+elements.copyShoppingButton.addEventListener("click", copyShoppingList);
+elements.shareShoppingButton.addEventListener("click", shareShoppingList);
+elements.resetShoppingButton.addEventListener("click", () => {
+  state.shoppingCompleted = [];
+  renderShopping(lastValidResult.plan);
+  persist();
 });
 
 elements.miseList.addEventListener("change", (event) => {

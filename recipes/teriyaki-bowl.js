@@ -10,14 +10,11 @@ export const defaultTeriyakiSettings = Object.freeze({
   persons: 8,
   finishTime: "13:00",
   buffer: 0,
-  vegetarians: 2,
-  meatEaters: 2,
-  chickenAvailable: 450,
+  chickenPortions: 6,
   chickenPerPerson: 180,
+  tofuPortions: 2,
   tofuPerPortion: 150,
-  flexTofuShare: 50,
   srirachaHeat: 2,
-  useAllChicken: false,
   ricePerPerson: 80,
   avocadoFactor: 0.5,
   mangoFactor: 0.25,
@@ -41,41 +38,53 @@ function roundTo(value, step = 1) {
   return Math.round(value / step) * step;
 }
 
+export function migrateTeriyakiSettings(input = {}) {
+  if ("chickenPortions" in input || "tofuPortions" in input) {
+    return input;
+  }
+  if ("meatEaters" in input || "vegetarians" in input) {
+    return {
+      ...input,
+      chickenPortions: numberValue(input.meatEaters, 0),
+      tofuPortions: numberValue(input.vegetarians, 0)
+    };
+  }
+  return input;
+}
+
 function normalizeSettings(input = {}) {
+  const migrated = migrateTeriyakiSettings(input);
   return {
-    persons: whole(input.persons, 1, 30),
-    finishTime: /^\d{2}:\d{2}$/.test(input.finishTime) ? input.finishTime : "13:00",
-    buffer: whole(input.buffer, 0, 60),
-    vegetarians: whole(input.vegetarians, 0, 30),
-    meatEaters: whole(input.meatEaters, 0, 30),
-    chickenAvailable: roundTo(clamp(numberValue(input.chickenAvailable, 450), 0, 10000), 10),
-    chickenPerPerson: roundTo(clamp(numberValue(input.chickenPerPerson, 180), 80, 300), 10),
-    tofuPerPortion: roundTo(clamp(numberValue(input.tofuPerPortion, 150), 80, 300), 10),
-    flexTofuShare: clamp(numberValue(input.flexTofuShare, 50), 0, 100),
-    srirachaHeat: whole(input.srirachaHeat, 1, 3),
-    useAllChicken: Boolean(input.useAllChicken),
-    ricePerPerson: roundTo(clamp(numberValue(input.ricePerPerson, 80), 50, 120), 5),
-    avocadoFactor: clamp(numberValue(input.avocadoFactor, 0.5), 0, 1),
-    mangoFactor: clamp(numberValue(input.mangoFactor, 0.25), 0, 1),
-    edamameEnabled: input.edamameEnabled !== false
+    persons: whole(migrated.persons, 1, 30),
+    finishTime: /^\d{2}:\d{2}$/.test(migrated.finishTime) ? migrated.finishTime : "13:00",
+    buffer: whole(migrated.buffer, 0, 60),
+    chickenPortions: whole(migrated.chickenPortions, 0, 60),
+    chickenPerPerson: roundTo(clamp(numberValue(migrated.chickenPerPerson, 180), 80, 300), 10),
+    tofuPortions: whole(migrated.tofuPortions, 0, 60),
+    tofuPerPortion: roundTo(clamp(numberValue(migrated.tofuPerPortion, 150), 80, 300), 10),
+    srirachaHeat: whole(migrated.srirachaHeat, 1, 3),
+    ricePerPerson: roundTo(clamp(numberValue(migrated.ricePerPerson, 80), 50, 120), 5),
+    avocadoFactor: clamp(numberValue(migrated.avocadoFactor, 0.5), 0, 1),
+    mangoFactor: clamp(numberValue(migrated.mangoFactor, 0.25), 0, 1),
+    edamameEnabled: migrated.edamameEnabled !== false
   };
 }
 
 export function validateTeriyakiSettings(input = {}) {
-  const settings = normalizeSettings({ ...defaultTeriyakiSettings, ...input });
+  const settings = normalizeSettings({
+    ...defaultTeriyakiSettings,
+    ...migrateTeriyakiSettings(input)
+  });
   const errors = [];
-
-  if (settings.vegetarians + settings.meatEaters > settings.persons) {
-    errors.push(
-      `Vegetarier und Fleischesser ergeben zusammen ${settings.vegetarians + settings.meatEaters}, geplant sind aber nur ${settings.persons} Personen.`
-    );
-  }
-
   return { settings, errors, valid: errors.length === 0 };
 }
 
 function makeIngredient(label, value, note = "") {
   return { label, value, note };
+}
+
+function makeShoppingItem(id, label, value, note = "") {
+  return { id, label, value, note };
 }
 
 export function calculateTeriyakiBowl(input = {}) {
@@ -85,24 +94,12 @@ export function calculateTeriyakiBowl(input = {}) {
   }
 
   const settings = validation.settings;
-  const flexible = settings.persons - settings.vegetarians - settings.meatEaters;
-  const chickenCapacity = Math.floor(settings.chickenAvailable / settings.chickenPerPerson);
-  const chickenPortions = Math.min(settings.meatEaters, chickenCapacity);
-  const chickenNeededForPortions = chickenPortions * settings.chickenPerPerson;
-  const chickenPlanned = settings.meatEaters === 0
-    ? 0
-    : settings.useAllChicken
-      ? settings.chickenAvailable
-      : chickenNeededForPortions;
-  const chickenSurplus = Math.max(0, settings.chickenAvailable - chickenPlanned);
-  const uncoveredMeatEaters = settings.meatEaters - chickenPortions;
-  const tofuIsNeeded = settings.vegetarians > 0;
-  const flexibleTofuPortions = tofuIsNeeded
-    ? Math.ceil(flexible * (settings.flexTofuShare / 100))
-    : 0;
-  const tofuFallbackPortions = tofuIsNeeded ? uncoveredMeatEaters : 0;
-  const tofuPortions = settings.vegetarians + tofuFallbackPortions + flexibleTofuPortions;
+  const chickenPortions = settings.chickenPortions;
+  const tofuPortions = settings.tofuPortions;
+  const chickenPlanned = chickenPortions * settings.chickenPerPerson;
   const tofuGrams = tofuPortions * settings.tofuPerPortion;
+  const totalProteinPortions = chickenPortions + tofuPortions;
+  const proteinDifference = totalProteinPortions - settings.persons;
 
   const riceGrams = roundTo(settings.persons * settings.ricePerPerson, 5);
   const waterMillilitres = roundTo(riceGrams * 1.1875, 5);
@@ -156,7 +153,7 @@ export function calculateTeriyakiBowl(input = {}) {
         makeIngredient("Salz", formatMass(riceSaltGrams))
       ]
     },
-    {
+    ...(proteinGrams > 0 ? [{
       id: "sauce",
       title: "Teriyaki-Sauce",
       description: `Skaliert auf ${formatMass(proteinGrams)} tatsächlich geplante Proteine.`,
@@ -169,7 +166,7 @@ export function calculateTeriyakiBowl(input = {}) {
         makeIngredient("Knoblauch, fein gerieben", formatMass(garlicGrams)),
         makeIngredient("Wasser", formatVolume(sauceWaterMillilitres))
       ]
-    },
+    }] : []),
     {
       id: "proteins",
       title: "Proteine",
@@ -180,10 +177,12 @@ export function calculateTeriyakiBowl(input = {}) {
         ...(tofuGrams > 0
           ? [makeIngredient("Naturtofu", formatMass(tofuGrams), `${tofuPortions} Portion(en)`)]
           : []),
-        makeIngredient(
-          "Neutrales Öl zum Braten",
-          formatVolume((timeline.tofuBatches + timeline.chickenBatches) * 10)
-        )
+        ...((timeline.tofuBatches + timeline.chickenBatches) > 0
+          ? [makeIngredient(
+            "Neutrales Öl zum Braten",
+            formatVolume((timeline.tofuBatches + timeline.chickenBatches) * 10)
+          )]
+          : [])
       ]
     },
     {
@@ -210,7 +209,77 @@ export function calculateTeriyakiBowl(input = {}) {
         makeIngredient("Limetten", formatPiece(limeCount, "Stück"))
       ]
     }
-  ];
+  ].filter((group) => group.items.length > 0);
+
+  const shoppingGroups = [
+    {
+      id: "shopping-rice",
+      title: "Reis und Vorrat",
+      items: [
+        makeShoppingItem("shop-rice", "Sushireis", formatMass(riceGrams)),
+        makeShoppingItem("shop-rice-vinegar", "Reisessig", formatVolume(riceVinegarMillilitres)),
+        makeShoppingItem("shop-rice-sugar", "Zucker", formatMass(riceSugarGrams)),
+        makeShoppingItem("shop-salt", "Salz", formatMass(riceSaltGrams)),
+        ...((timeline.tofuBatches + timeline.chickenBatches) > 0
+          ? [makeShoppingItem(
+            "shop-oil",
+            "Neutrales Öl zum Braten",
+            formatVolume((timeline.tofuBatches + timeline.chickenBatches) * 10)
+          )]
+          : [])
+      ]
+    },
+    {
+      id: "shopping-proteins",
+      title: "Proteine",
+      items: [
+        ...(chickenPlanned > 0
+          ? [makeShoppingItem("shop-chicken", "Hähnchen", formatMass(chickenPlanned), `${chickenPortions} Portion(en)`)]
+          : []),
+        ...(tofuGrams > 0
+          ? [makeShoppingItem("shop-tofu", "Naturtofu", formatMass(tofuGrams), `${tofuPortions} Portion(en)`)]
+          : [])
+      ]
+    },
+    {
+      id: "shopping-produce",
+      title: "Gemüse und Obst",
+      items: [
+        ...(avocadoCount ? [makeShoppingItem("shop-avocado", "Avocado", formatPiece(avocadoCount, "Stück"))] : []),
+        makeShoppingItem("shop-cucumber", "Große Gurke", formatPiece(cucumberCount, "Stück")),
+        ...(mangoCount ? [makeShoppingItem("shop-mango", "Mango", formatPiece(mangoCount, "Stück"))] : []),
+        makeShoppingItem("shop-onions", "Frühlingszwiebeln", formatPiece(springOnionCount, "Stück")),
+        ...(edamameGrams ? [makeShoppingItem("shop-edamame", "Edamame", formatMass(edamameGrams))] : []),
+        makeShoppingItem("shop-limes", "Limetten", formatPiece(limeCount, "Stück")),
+        ...(proteinGrams > 0 ? [
+          makeShoppingItem("shop-ginger", "Ingwer", formatMass(gingerGrams)),
+          makeShoppingItem("shop-garlic", "Knoblauch", formatMass(garlicGrams))
+        ] : [])
+      ]
+    },
+    {
+      id: "shopping-sauces",
+      title: "Saucen und Würzung",
+      items: [
+        ...(proteinGrams > 0 ? [
+          makeShoppingItem("shop-soy", "Sojasauce", formatVolume(soyMillilitres)),
+          makeShoppingItem("shop-mirin", "Mirin", formatVolume(mirinMillilitres)),
+          makeShoppingItem("shop-sauce-sugar", "Zucker oder Honig", formatMass(sauceSugarGrams)),
+          makeShoppingItem("shop-sesame-oil", "Sesamöl", formatVolume(sesameOilMillilitres))
+        ] : []),
+        makeShoppingItem("shop-mayo", "Mayonnaise", formatVolume(mayoMillilitres)),
+        makeShoppingItem("shop-sriracha", "Sriracha", formatVolume(srirachaMillilitres)),
+        makeShoppingItem("shop-sesame", "Sesam", formatMass(sesameGrams))
+      ]
+    },
+    {
+      id: "shopping-optional",
+      title: "Optional",
+      items: [
+        makeShoppingItem("shop-nori", "Nori", formatPiece(noriSheets, "Blatt", "Blätter"))
+      ]
+    }
+  ].filter((group) => group.items.length > 0);
 
   const miseTasks = [
     {
@@ -228,11 +297,11 @@ export function calculateTeriyakiBowl(input = {}) {
       title: `${formatMass(chickenPlanned)} Hähnchen schneiden`,
       detail: "In gleichmäßige, mundgerechte Stücke schneiden und getrennt vom Tofu lagern."
     }] : []),
-    {
+    ...(proteinGrams > 0 ? [{
       id: "mise-sauce",
       title: "Teriyaki-Sauce anrühren",
       detail: `${formatVolume(soyMillilitres)} Sojasauce, ${formatVolume(mirinMillilitres)} Mirin, ${formatMass(sauceSugarGrams)} Zucker oder Honig, Ingwer, Knoblauch, Sesamöl und Wasser verrühren.`
-    },
+    }] : []),
     {
       id: "mise-mayo",
       title: "Sriracha-Mayo anrühren",
@@ -267,11 +336,13 @@ export function calculateTeriyakiBowl(input = {}) {
 
   const stepContent = {
     start: {
-      instruction: "Arbeitsplatz aufbauen, Tofu pressen und beide Saucen anrühren.",
+      instruction: proteinGrams > 0
+        ? "Arbeitsplatz aufbauen, Proteine vorbereiten und beide Saucen anrühren."
+        : "Arbeitsplatz aufbauen und die Sriracha-Mayo anrühren.",
       details: [
         tofuGrams > 0 ? `${formatMass(tofuGrams)} Tofu pressen.` : null,
         chickenPlanned > 0 ? `${formatMass(chickenPlanned)} Hähnchen getrennt vorbereiten.` : null,
-        "Vegetarisches Besteck klar getrennt bereitlegen."
+        tofuGrams > 0 && chickenPlanned > 0 ? "Vegetarisches Besteck klar getrennt bereitlegen." : null
       ].filter(Boolean),
       parallel: "Die kalten Zutaten können danach ohne Qualitätsverlust vorbereitet werden."
     },
@@ -346,41 +417,27 @@ export function calculateTeriyakiBowl(input = {}) {
     timerMinutes: step.duration
   }));
 
-  const advisory = uncoveredMeatEaters > 0 && tofuIsNeeded
-    ? `${uncoveredMeatEaters} Fleischesser werden wegen der vorhandenen Hähnchenmenge zusätzlich mit Tofu eingeplant.`
-    : uncoveredMeatEaters > 0
-      ? `${uncoveredMeatEaters} Fleischesser sind mit der vorhandenen Hähnchenmenge nicht abgedeckt. Es wird kein Tofu eingeplant, da keine vegetarischen Gäste angegeben sind.`
-      : chickenSurplus > 0
-      ? `${formatMass(chickenSurplus)} Hähnchen bleiben übrig und werden nicht automatisch eingeplant.`
-      : settings.useAllChicken && chickenPlanned > chickenNeededForPortions
-        ? `${formatMass(chickenPlanned - chickenNeededForPortions)} Hähnchen werden als zusätzliche Menge mitgebraten.`
-        : "";
+  const advisory = proteinDifference < 0
+    ? `Für ${Math.abs(proteinDifference)} Person(en) ist noch keine Proteinportion gewählt.`
+    : proteinDifference > 0
+      ? `${proteinDifference} zusätzliche Proteinportion(en) sind eingeplant. Das ist zulässig, wenn jemand beide Varianten probieren möchte.`
+      : "";
 
-  const proteinLogic = [
-    settings.vegetarians === 0
-      ? "Kein Tofu, da keine vegetarischen Gäste angegeben sind."
-      : flexibleTofuPortions > 0
-        ? `Für flexible Gäste sind ${flexibleTofuPortions} zusätzliche Tofuportion(en) eingeplant.`
-        : "Tofu wird nur für die vegetarischen Gäste eingeplant.",
-    settings.meatEaters === 0
-      ? "Kein Hähnchen, da keine Fleischesser angegeben sind."
-      : ""
-  ].filter(Boolean).join(" ");
+  const proteinLogic = `${chickenPortions} Hähnchenportion(en) à ${formatMass(settings.chickenPerPerson)} und ${tofuPortions} Tofuportion(en) à ${formatMass(settings.tofuPerPortion)}.`;
 
   return {
     ...validation,
     plan: {
-      flexible,
       chickenPortions,
       chickenPlanned,
-      chickenSurplus,
-      uncoveredMeatEaters,
-      flexibleTofuPortions,
       tofuPortions,
       tofuGrams,
+      totalProteinPortions,
+      proteinDifference,
       riceGrams,
       proteinGrams,
       ingredientGroups,
+      shoppingGroups,
       miseTasks,
       cookSteps,
       timeline,
@@ -391,7 +448,7 @@ export function calculateTeriyakiBowl(input = {}) {
         { id: "chicken", label: "Hähnchen", value: formatMass(chickenPlanned), icon: "chicken" },
         { id: "tofu", label: "Tofu", value: formatMass(tofuGrams), icon: "cube" }
       ],
-      logicText: `${settings.vegetarians} vegetarisch, ${settings.meatEaters} mit Fleisch, ${flexible} flexibel. ${proteinLogic}`
+      logicText: `${totalProteinPortions} Proteinportion(en) für ${settings.persons} Personen. ${proteinLogic}`
     }
   };
 }
@@ -405,6 +462,7 @@ export const teriyakiBowl = {
   servingRange: "1–30 Personen",
   dietary: "Vegetarisch möglich",
   defaults: defaultTeriyakiSettings,
+  migrateSettings: migrateTeriyakiSettings,
   validate: validateTeriyakiSettings,
   calculate: calculateTeriyakiBowl
 };

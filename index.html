@@ -74,61 +74,50 @@
                   </label>
                 </div>
 
-                <section class="settings-section" aria-labelledby="guests-heading">
+                <section class="settings-section" aria-labelledby="proteins-heading">
                   <div class="section-heading-row">
                     <div>
-                      <h3 id="guests-heading">Gäste</h3>
-                      <p>Flexible Gäste ergeben sich automatisch.</p>
+                      <h3 id="proteins-heading">Proteine</h3>
+                      <p>Lege direkt fest, wie viele Portionen du brauchst.</p>
                     </div>
-                    <strong id="flexible-summary">4 flexibel</strong>
+                    <strong id="protein-portions-summary">8 Portionen</strong>
                   </div>
                   <div class="compact-grid">
                     <label class="field">
-                      <span>Vegetarier</span>
-                      <input id="vegetarians" name="vegetarians" type="number" min="0" max="30" value="2">
-                    </label>
-                    <label class="field">
-                      <span>Fleischesser</span>
-                      <input id="meat-eaters" name="meatEaters" type="number" min="0" max="30" value="2">
-                    </label>
-                  </div>
-                  <p class="validation-message" id="guest-validation" role="alert" hidden></p>
-                </section>
-
-                <details class="settings-details" open>
-                  <summary>Proteine und Sauce</summary>
-                  <div class="compact-grid details-grid">
-                    <label class="field">
-                      <span>Hähnchen vorhanden</span>
+                      <span>Hähnchen für</span>
                       <div class="input-with-unit">
-                        <input id="chicken-available" name="chickenAvailable" type="number" min="0" max="10000" step="10" value="450">
-                        <span>g</span>
+                        <input id="chicken-portions" name="chickenPortions" type="number" min="0" max="60" value="6">
+                        <span>Personen</span>
                       </div>
                     </label>
                     <label class="field">
-                      <span>Hähnchen je Fleischesser</span>
+                      <span>Hähnchen je Person</span>
                       <div class="input-with-unit">
                         <input id="chicken-per-person" name="chickenPerPerson" type="number" min="80" max="300" step="10" value="180">
                         <span>g</span>
                       </div>
                     </label>
                     <label class="field">
-                      <span>Tofu je Portion</span>
+                      <span>Tofu für</span>
+                      <div class="input-with-unit">
+                        <input id="tofu-portions" name="tofuPortions" type="number" min="0" max="60" value="2">
+                        <span>Personen</span>
+                      </div>
+                    </label>
+                    <label class="field">
+                      <span>Tofu je Person</span>
                       <div class="input-with-unit">
                         <input id="tofu-per-portion" name="tofuPerPortion" type="number" min="80" max="300" step="10" value="150">
                         <span>g</span>
                       </div>
                     </label>
-                    <label class="field">
-                      <span>Flexible Tofuportionen</span>
-                      <select id="flex-tofu-share" name="flexTofuShare">
-                        <option value="0">0 %</option>
-                        <option value="25">25 %</option>
-                        <option value="50" selected>50 %</option>
-                        <option value="75">75 %</option>
-                        <option value="100">100 %</option>
-                      </select>
-                    </label>
+                  </div>
+                  <p class="protein-coverage-note" id="protein-coverage-note"></p>
+                </section>
+
+                <details class="settings-details" open>
+                  <summary>Sauce und Schärfe</summary>
+                  <div class="compact-grid details-grid">
                     <label class="field">
                       <span>Sriracha-Mayo</span>
                       <select id="sriracha-heat" name="srirachaHeat">
@@ -136,13 +125,6 @@
                         <option value="2" selected>Normal</option>
                         <option value="3">Scharf</option>
                       </select>
-                    </label>
-                    <label class="toggle-row">
-                      <span>
-                        <strong>Überschuss mitbraten</strong>
-                        <small>Sonst wird nur der Bedarf eingeplant.</small>
-                      </span>
-                      <input id="use-all-chicken" name="useAllChicken" type="checkbox" role="switch">
                     </label>
                   </div>
                 </details>
@@ -234,6 +216,21 @@
                   <button class="text-button" id="print-button" type="button">Drucken</button>
                 </div>
               </div>
+              <section class="shopping-section" aria-labelledby="shopping-title">
+                <div class="shopping-heading">
+                  <div>
+                    <h3 id="shopping-title">Einkaufsliste</h3>
+                    <p>Abhaken, kopieren oder über das iPad-Share-Sheet an Erinnerungen übergeben.</p>
+                  </div>
+                  <div class="shopping-actions">
+                    <button class="button button-primary" id="share-shopping-button" type="button">Einkaufsliste teilen</button>
+                    <button class="button button-secondary" id="copy-shopping-button" type="button">Kopieren</button>
+                    <button class="text-button" id="reset-shopping-button" type="button">Haken zurücksetzen</button>
+                  </div>
+                </div>
+                <div class="shopping-groups" id="shopping-groups"></div>
+                <p class="shopping-status" id="shopping-status" role="status" aria-live="polite"></p>
+              </section>
               <div class="ingredient-groups" id="ingredient-groups"></div>
               <div class="phase-footer-actions">
                 <button class="button button-primary next-phase-button" type="button" data-next-phase="mise">

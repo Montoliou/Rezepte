@@ -1,4 +1,4 @@
-const CACHE_NAME = "montys-rezepte-v5";
+const CACHE_NAME = "montys-rezepte-v6";
 const APP_FILES = [
   "./",
   "./index.html",
