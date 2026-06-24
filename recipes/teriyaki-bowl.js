@@ -3,8 +3,8 @@ import {
   formatMass,
   formatPiece,
   formatVolume
-} from "../lib/format.js";
-import { buildTimeline } from "../lib/timeline.js";
+} from "../lib/format.js?v=2";
+import { buildTimeline } from "../lib/timeline.js?v=2";
 
 export const defaultTeriyakiSettings = Object.freeze({
   persons: 8,
@@ -457,7 +457,7 @@ export const teriyakiBowl = {
   id: "teriyaki-bowl",
   name: "Teriyaki Bowl",
   description: "Sushi-Reis, Teriyaki-Tofu und Hähnchen mit frischen Toppings und Sriracha-Mayo.",
-  image: "./assets/images/teriyaki-bowl.png",
+  image: "./assets/images/teriyaki-bowl.png?v=2",
   duration: "ca. 2 Stunden",
   servingRange: "1–30 Personen",
   dietary: "Vegetarisch möglich",

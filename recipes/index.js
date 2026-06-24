@@ -1,4 +1,4 @@
-import { teriyakiBowl } from "./teriyaki-bowl.js";
+import { teriyakiBowl } from "./teriyaki-bowl.js?v=2";
 
 export const recipes = [teriyakiBowl];
 

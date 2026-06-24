@@ -1,17 +1,17 @@
-const CACHE_NAME = "montys-rezepte-v6";
+const CACHE_NAME = "montys-rezepte-v7";
 const APP_FILES = [
   "./",
   "./index.html",
-  "./manifest.webmanifest",
-  "./assets/styles.css",
-  "./assets/app.js",
-  "./assets/icons/app-icon.svg",
-  "./assets/images/teriyaki-bowl.png",
-  "./recipes/index.js",
-  "./recipes/teriyaki-bowl.js",
-  "./lib/format.js",
-  "./lib/storage.js",
-  "./lib/timeline.js"
+  "./manifest.webmanifest?v=2",
+  "./assets/styles.css?v=2",
+  "./assets/app.js?v=2",
+  "./assets/icons/app-icon.svg?v=2",
+  "./assets/images/teriyaki-bowl.png?v=2",
+  "./recipes/index.js?v=2",
+  "./recipes/teriyaki-bowl.js?v=2",
+  "./lib/format.js?v=2",
+  "./lib/storage.js?v=2",
+  "./lib/timeline.js?v=2"
 ];
 
 self.addEventListener("install", (event) => {
@@ -36,6 +36,19 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", responseClone));
+          return response;
+        })
+        .catch(() => caches.match("./index.html"))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

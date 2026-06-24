@@ -1,6 +1,6 @@
-import { recipes, getRecipe } from "../recipes/index.js";
-import { formatDuration } from "../lib/format.js";
-import { loadState, saveState } from "../lib/storage.js";
+import { recipes, getRecipe } from "../recipes/index.js?v=2";
+import { formatDuration } from "../lib/format.js?v=2";
+import { loadState, saveState } from "../lib/storage.js?v=2";
 
 const icons = {
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
@@ -752,7 +752,7 @@ document.addEventListener("visibilitychange", () => {
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {
+    navigator.serviceWorker.register("./sw.js?v=2").catch(() => {
       // Kernfunktionen bleiben ohne Service Worker vollständig nutzbar.
     });
   });
