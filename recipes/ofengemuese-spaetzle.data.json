@@ -1,0 +1,292 @@
+{
+  "schemaVersion": "handoff-v1",
+  "status": "implementation-pending",
+  "id": "ofengemuese-butter-spaetzle",
+  "title": "Ofengemüse mit cremigen Butter-Spätzle",
+  "description": "Goldbraune Kartoffeln, optional Hokkaido, Paprika und Zwiebeln auf cremigen Knoblauch-Thymian-Spätzle mit einem Hauch Ingwer, Parmesan und Zitrone.",
+  "category": "Vegetarische Hauptgerichte",
+  "portionDefault": 4,
+  "portionMin": 1,
+  "portionMax": 30,
+  "estimatedMinutes": 55,
+  "oven": {
+    "convectionCelsius": 200,
+    "minutesRange": [
+      35,
+      40
+    ]
+  },
+  "options": [
+    {
+      "id": "pumpkin",
+      "type": "boolean",
+      "default": true,
+      "label": "Mit Hokkaido"
+    },
+    {
+      "id": "ginger",
+      "type": "boolean",
+      "default": true,
+      "label": "Mit frischem Ingwer"
+    },
+    {
+      "id": "spaetzle",
+      "type": "select",
+      "default": "dried",
+      "values": [
+        "dried",
+        "fresh"
+      ],
+      "label": "Spätzleart"
+    }
+  ],
+  "ingredients": [
+    {
+      "id": "potatoes",
+      "group": "Ofengemüse",
+      "label": "Kartoffeln mit Schale",
+      "amountPerFour": 400,
+      "unit": "g",
+      "rule": "Bei pumpkin=false 650 g statt 400 g pro 4 Personen"
+    },
+    {
+      "id": "pumpkin",
+      "group": "Ofengemüse",
+      "label": "Hokkaido-Kürbis mit Schale",
+      "amountPerFour": 400,
+      "unit": "g",
+      "when": "pumpkin=true"
+    },
+    {
+      "id": "pepper",
+      "group": "Ofengemüse",
+      "label": "Rote Paprika",
+      "amountPerFour": 1,
+      "unit": "Stück",
+      "rounding": "round-up"
+    },
+    {
+      "id": "onions",
+      "group": "Ofengemüse",
+      "label": "Gemüsezwiebeln",
+      "amountPerFour": 2,
+      "unit": "Stück",
+      "rounding": "round-up"
+    },
+    {
+      "id": "garlic",
+      "group": "Ofengemüse",
+      "label": "Knoblauchzehen",
+      "amountPerFour": 4,
+      "unit": "Zehen",
+      "rounding": "round-up"
+    },
+    {
+      "id": "oil",
+      "group": "Ofengemüse",
+      "label": "Olivenöl",
+      "amountPerFour": 45,
+      "unit": "ml"
+    },
+    {
+      "id": "thyme",
+      "group": "Gewürze",
+      "label": "Thymian, getrocknet",
+      "amountPerFour": 1,
+      "unit": "TL"
+    },
+    {
+      "id": "rosemary",
+      "group": "Gewürze",
+      "label": "Rosmarin, getrocknet",
+      "amountPerFour": 0.5,
+      "unit": "TL"
+    },
+    {
+      "id": "paprikaSweet",
+      "group": "Gewürze",
+      "label": "Paprikapulver, edelsüß",
+      "amountPerFour": 1,
+      "unit": "TL"
+    },
+    {
+      "id": "paprikaSmoked",
+      "group": "Gewürze",
+      "label": "Geräuchertes Paprikapulver",
+      "amountPerFour": 0.5,
+      "unit": "TL"
+    },
+    {
+      "id": "spaetzleDried",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Spätzle, trocken",
+      "amountPerFour": 340,
+      "unit": "g",
+      "when": "spaetzle=dried"
+    },
+    {
+      "id": "spaetzleFresh",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Spätzle, frisch",
+      "amountPerFour": 600,
+      "unit": "g",
+      "when": "spaetzle=fresh"
+    },
+    {
+      "id": "springOnions",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Frühlingszwiebeln",
+      "amountPerFour": 3,
+      "unit": "Stück",
+      "rounding": "round-up"
+    },
+    {
+      "id": "butter",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Butter",
+      "amountPerFour": 25,
+      "unit": "g"
+    },
+    {
+      "id": "ginger",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Frischer Ingwer",
+      "amountPerFour": 5,
+      "unit": "g",
+      "when": "ginger=true"
+    },
+    {
+      "id": "cream",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Sahne",
+      "amountPerFour": 200,
+      "unit": "ml"
+    },
+    {
+      "id": "stock",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Gemüsebrühe",
+      "amountPerFour": 100,
+      "unit": "ml"
+    },
+    {
+      "id": "parmesan",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Parmesan, fein gerieben",
+      "amountPerFour": 35,
+      "unit": "g",
+      "note": "vegetarische Alternative bei Bedarf"
+    },
+    {
+      "id": "lemon",
+      "group": "Spätzle und Rahmsoße",
+      "label": "Zitronensaft",
+      "amountPerFour": 5,
+      "unit": "ml"
+    },
+    {
+      "id": "nutmeg",
+      "group": "Gewürze",
+      "label": "Muskat",
+      "amountPerFour": 1,
+      "unit": "Prise"
+    },
+    {
+      "id": "salt",
+      "group": "Gewürze",
+      "label": "Salz",
+      "amount": null,
+      "unit": "nach Geschmack"
+    },
+    {
+      "id": "blackPepper",
+      "group": "Gewürze",
+      "label": "Pfeffer",
+      "amount": null,
+      "unit": "nach Geschmack"
+    }
+  ],
+  "steps": [
+    {
+      "id": "prep",
+      "title": "Vorbereiten",
+      "minutes": 10,
+      "text": "Backofen auf 200 °C Umluft vorheizen. Kartoffeln gründlich waschen, trocknen und mit Schale in ca. 2 cm Stücke schneiden; optional Kürbis ebenfalls würfeln. Zwiebeln in Spalten, Paprika grob schneiden, Knoblauch in der Schale lassen. Frühlingszwiebeln in weiße und grüne Ringe teilen.",
+      "imageId": "ingredients"
+    },
+    {
+      "id": "roast1",
+      "title": "Gemüse anrösten",
+      "minutes": 20,
+      "text": "Kartoffeln, Kürbis (optional), Zwiebeln und Knoblauch mit Öl und Gewürzen vermengen, auf Blech einlagig verteilen, 20 Minuten bei 200 °C Umluft rösten. Kartoffel-Schnittflächen nach unten.",
+      "imageId": "tray"
+    },
+    {
+      "id": "roast2",
+      "title": "Paprika ergänzen",
+      "minutes": 20,
+      "text": "Paprikastücke nach 20 Minuten zugeben, alles wenden, weitere 15–20 Minuten rösten. Knoblauch anschließend ausdrücken.",
+      "imageId": "tray"
+    },
+    {
+      "id": "spaetzle",
+      "title": "Spätzle kochen",
+      "minutes": 10,
+      "text": "Während der zweiten Röstphase Spätzle nach Packungsangabe in Salzwasser garen; 2–3 EL Kochwasser zurückhalten.",
+      "parallelWith": "roast2"
+    },
+    {
+      "id": "sauce",
+      "title": "Knoblauch-Rahmsoße",
+      "minutes": 6,
+      "text": "Butter in Pfanne schmelzen, weiße Frühlingszwiebelteile 2 Minuten anschwitzen, optional Ingwer 30–60 Sekunden dazugeben. Gerösteten Knoblauch, Sahne und Gemüsebrühe zufügen; 3–4 Minuten leicht köcheln. Muskat, Salz und Pfeffer zugeben.",
+      "imageId": "sauce"
+    },
+    {
+      "id": "toss",
+      "title": "Spätzle schwenken",
+      "minutes": 2,
+      "text": "Gegarte Spätzle in die Soße geben und 2 Minuten schwenken. Bei Bedarf mit etwas Kochwasser verdünnen."
+    },
+    {
+      "id": "finish",
+      "title": "Parmesan und Zitrone",
+      "minutes": 1,
+      "text": "Herd ausschalten, Parmesan unterrühren; erst danach Zitronensaft zugeben und abschmecken. Nicht mehr stark erhitzen."
+    },
+    {
+      "id": "serve",
+      "title": "Anrichten",
+      "minutes": 2,
+      "text": "Spätzle auf Teller verteilen, geröstetes Gemüse erst beim Anrichten darübergeben. Mit grünen Frühlingszwiebeln, Pfeffer und optional zurückbehaltenem Parmesan servieren.",
+      "imageId": "hero"
+    }
+  ],
+  "media": [
+    {
+      "id": "hero",
+      "target": "assets/images/ofengemuese-spaetzle-hero.webp",
+      "alt": "Cremige Butter-Spätzle mit goldbraunem Ofengemüse",
+      "status": "missing"
+    },
+    {
+      "id": "ingredients",
+      "target": "assets/images/ofengemuese-spaetzle-zutaten.webp",
+      "alt": "Kartoffeln, Paprika, Zwiebeln und Frühlingszwiebeln vor der Zubereitung",
+      "status": "user-photo-available-in-chat-not-yet-in-repo"
+    },
+    {
+      "id": "tray",
+      "target": "assets/images/ofengemuese-spaetzle-blech.webp",
+      "alt": "Geröstete Kartoffeln, Kürbis, Paprika und Zwiebeln auf dem Backblech",
+      "status": "missing"
+    },
+    {
+      "id": "sauce",
+      "target": "assets/images/ofengemuese-spaetzle-sosse.webp",
+      "alt": "Spätzle in cremiger Knoblauch-Rahmsoße in einer Pfanne",
+      "status": "missing"
+    }
+  ],
+  "implementationNote": "Datenvorlage, kein bereits integriertes App-Modul. Bestehende UI hat Teriyaki-spezifische Eingabefelder; generisch machen."
+}
