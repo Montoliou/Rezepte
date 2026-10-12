@@ -265,28 +265,32 @@
   "media": [
     {
       "id": "hero",
-      "target": "assets/images/ofengemuese-spaetzle-hero.webp",
+      "target": "assets/images/ofengemuese-spaetzle-hero.svg",
       "alt": "Cremige Butter-Spätzle mit goldbraunem Ofengemüse",
-      "status": "missing"
+      "status": "illustration-in-branch",
+      "type": "SVG-Rezeptillustration"
     },
     {
       "id": "ingredients",
-      "target": "assets/images/ofengemuese-spaetzle-zutaten.webp",
-      "alt": "Kartoffeln, Paprika, Zwiebeln und Frühlingszwiebeln vor der Zubereitung",
-      "status": "user-photo-available-in-chat-not-yet-in-repo"
+      "target": "assets/images/ofengemuese-spaetzle-zutaten.svg",
+      "alt": "Kartoffeln, Paprika, Zwiebeln und Kürbis auf einem Küchenbrett",
+      "status": "illustration-in-branch",
+      "type": "SVG-Rezeptillustration"
     },
     {
       "id": "tray",
-      "target": "assets/images/ofengemuese-spaetzle-blech.webp",
+      "target": "assets/images/ofengemuese-spaetzle-blech.svg",
       "alt": "Geröstete Kartoffeln, Kürbis, Paprika und Zwiebeln auf dem Backblech",
-      "status": "missing"
+      "status": "illustration-in-branch",
+      "type": "SVG-Rezeptillustration"
     },
     {
       "id": "sauce",
-      "target": "assets/images/ofengemuese-spaetzle-sosse.webp",
-      "alt": "Spätzle in cremiger Knoblauch-Rahmsoße in einer Pfanne",
-      "status": "missing"
+      "target": "assets/images/ofengemuese-spaetzle-sosse.svg",
+      "alt": "Spätzle in cremiger Rahmsoße in einer Pfanne",
+      "status": "illustration-in-branch",
+      "type": "SVG-Rezeptillustration"
     }
   ],
-  "implementationNote": "Datenvorlage, kein bereits integriertes App-Modul. Bestehende UI hat Teriyaki-spezifische Eingabefelder; generisch machen."
+  "implementationNote": "Datenvorlage, kein bereits integriertes App-Modul. Bestehende UI hat Teriyaki-spezifische Eingabefelder; generisch machen. Vier SVG-Illustrationen im Branch enthalten; vor Deployment prüfen."
 }
