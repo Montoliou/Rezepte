@@ -63,15 +63,16 @@
 
 ## Bilder und Bildredaktion
 
-Im Chat ist **ein eigenes Zutatenfoto des Nutzers** vorhanden. Es wurde nicht in das Repository hochgeladen. Es liegt zusätzlich im lokalen Übergabepaket `ofengemuese-spaetzle-uebergabe.zip`; Lucius benötigt dieses Bild separat. Neue KI-Rezeptfotos konnten wegen eines Generierungsfehlers nicht bereitgestellt werden.
+**Vier eigene, eigens für diese Rezeptübergabe erstellte SVG-Illustrationen liegen bereits auf dem Übergabe-Zweig.** Sie sind stilisierte Rezeptillustrationen und **keine Food-Fotografien**. Für den ersten Einbau dürfen sie als Bildmaterial genutzt werden; später können sie optional gegen eigene Fotos ausgetauscht werden.
 
-Geplante Medien (vor Veröffentlichung anlegen, Rechte prüfen und optimieren):
-1. `assets/images/ofengemuese-spaetzle-hero.webp`: fertiger Teller mit cremigen Spätzle, geröstetem Kürbis, Kartoffeln, roter Paprika, Zwiebeln und Frühlingszwiebelgrün; ALT: „Cremige Butter-Spätzle mit goldbraunem Ofengemüse“.
-2. `assets/images/ofengemuese-spaetzle-zutaten.webp`: Foto der realen Zutaten aus dem Chat, zugeschnitten und als WebP exportiert; ALT: „Kartoffeln, Paprika, Zwiebeln und Frühlingszwiebeln vor der Zubereitung“.
-3. `assets/images/ofengemuese-spaetzle-blech.webp`: Gemüse goldbraun auf dem Ofenblech; ALT: „Geröstete Kartoffeln, Kürbis, Paprika und Zwiebeln auf dem Backblech“.
-4. `assets/images/ofengemuese-spaetzle-sosse.webp`: Spätzle werden in Knoblauch-Rahmsoße geschwenkt; ALT: „Spätzle in cremiger Knoblauch-Rahmsoße in einer Pfanne“.
+| Verwendung | Datei | ALT-Text |
+|---|---|---|
+| Rezeptkachel und Titelmotiv | `assets/images/ofengemuese-spaetzle-hero.svg` | Cremige Butter-Spätzle mit goldbraunem Ofengemüse |
+| Zutatenansicht | `assets/images/ofengemuese-spaetzle-zutaten.svg` | Kartoffeln, Paprika, Zwiebeln und Kürbis auf einem Küchenbrett |
+| Zubereitung: Backblech | `assets/images/ofengemuese-spaetzle-blech.svg` | Geröstete Kartoffeln, Kürbis, Paprika und Zwiebeln auf dem Backblech |
+| Zubereitung: Pfanne | `assets/images/ofengemuese-spaetzle-sosse.svg` | Spätzle in cremiger Rahmsoße in einer Pfanne |
 
-Keine fremden Bildern ohne Nutzungsrechte einbauen; fehlende Fotos nicht als vorhanden deklarieren.
+Ein eigenes Zutatenfoto liegt zudem im ursprünglichen Nutzerchat vor, jedoch **nicht im Repository**. Dieses kann Lucius später anstelle der Zutatenillustration ergänzen, sobald die Originaldatei verfügbar ist. Fremdbilder nur mit gesicherten Nutzungsrechten verwenden. Vor Veröffentlichung Darstellungs- und Performance-Test auf iPad durchführen; nach Möglichkeit SVGs für das Projekt ggf. in optimierte WebP-Varianten konvertieren.
 
 ## Technischer Integrationshinweis für Lucius
 
